@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:560px;margin:0 auto;">
+  <h2 style="margin:0 0 8px;">Verify OTP</h2>
+  <div class="small-muted">
+    We sent an OTP to: <b>{{ company_email if company_email else "NULL" }}</b>
+  </div>
+
+  <!-- OTP delivery status -->
+  <div style="margin-top:12px;">
+    {% if otp_delivery == "SENT" %}
+      <div class="alert success">OTP delivery status: SENT ✅</div>
+    {% elif otp_delivery == "FAILED" %}
+      <div class="alert danger">
+        OTP delivery status: FAILED ❌ (Check Spam/Promotions)
+        <div class="small-muted" style="margin-top:6px;">
+          Demo OTP (only shown when delivery failed): <b>{{ debug_last_otp if debug_last_otp else "NULL" }}</b>
+        </div>
+      </div>
+    {% else %}
+      <div class="alert info">
+        OTP delivery status: NULL
+        <div class="small-muted" style="margin-top:6px;">
+          Demo OTP: <b>{{ debug_last_otp if debug_last_otp else "NULL" }}</b>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      <form method="POST">
+        <label class="form-label">Enter 6-digit OTP</label>
+        <input class="input" name="otp" maxlength="6" placeholder="123456" required>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:12px 14px;">
+          Verify →
+        </button>
+      </form>
+
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn" href="{{ url_for('resend_company_otp') }}">Resend OTP</a>
+        <a class="btn btn-ghost" href="{{ url_for('company_login') }}">Company Login</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

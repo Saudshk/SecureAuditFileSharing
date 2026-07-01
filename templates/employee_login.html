@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:560px;margin:0 auto;">
+  <h2 style="margin:0 0 8px;">{{ role|capitalize }} Login</h2>
+  <div class="small-muted">Enter your employee credentials.</div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      <form method="POST">
+        <label class="form-label">Username</label>
+        <input class="input" name="username" required>
+
+        <label class="form-label">Password</label>
+        <input class="input" type="password" name="password" required>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:12px 14px;">
+          Login →
+        </button>
+      </form>
+
+      <div style="margin-top:14px;">
+        <a class="btn btn-ghost" href="{{ url_for('portal_select') }}">Back</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

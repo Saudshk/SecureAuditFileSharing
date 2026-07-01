@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+  
+  .section{
+  max-width:1050px;
+  margin:auto;
+  padding:60px 0;
+}
+.section-divider{
+  height:1px;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,.18),
+    transparent
+  );
+  margin:40px auto;
+  max-width:1050px;
+}
+  /* Scroll reveal animations */
+  .reveal { opacity:0; transform: translateY(18px); transition: all .7s ease; }
+  .reveal.show { opacity:1; transform: translateY(0); }
+
+  .from-left { transform: translateX(-40px); }
+  .from-right { transform: translateX(40px); }
+  .from-left.show, .from-right.show { transform: translateX(0); }
+
+  .section-title{
+    font-size: 30px;
+    margin: 0 0 10px;
+    letter-spacing: -0.4px;
+  }
+  .cards{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  @media (max-width: 980px){
+    .cards{ grid-template-columns: 1fr; }
+  }
+  .card{
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    padding: 16px;
+  }
+  .card h4{ margin:0 0 8px; }
+  .card p{ margin:0; color: rgba(244,244,255,.65); font-size: 14px; line-height: 1.5; }
+  .security-cards{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:12px;
+}
+
+/* Mobile */
+@media (max-width:980px){
+  .security-cards{
+    grid-template-columns: 1fr;
+  }
+}
+  .timeline{
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .step{
+    display:flex; gap:12px; align-items:flex-start;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.05);
+    padding: 14px;
+  }
+  .dot{
+    width: 32px; height: 32px; border-radius: 12px;
+    display:grid; place-items:center;
+    background: linear-gradient(135deg, rgba(74,86,255,1), rgba(140,77,255,1));
+    font-weight: 900;
+  }
+  .step b{ display:block; margin-bottom:4px; }
+  .step span{ color: rgba(244,244,255,.65); font-size: 14px; }
+
+  .big-space{ height: 24px; }
+</style>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Share any file, <span>Safe</span></h1>
+  <p>
+    A secure audit file transfer system with role-based access, OTP verification,
+    and detailed audit trails for every action — plus a public send/receive mode using a 6-digit code.
+  </p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary" href="{{ url_for('public_send') }}">Send now</a>
+    <a class="btn" href="{{ url_for('public_receive') }}">Receive</a>
+    <a class="btn btn-ghost" href="{{ url_for('register_company') }}">Register Company</a>
+  </div>
+
+  <!-- MAIN GLASS CARD (like your theme) -->
+  <div class="glass-card reveal" style="max-width: 1050px;">
+    <div class="card-inner">
+
+      <div class="left-pane">
+        <div class="badge">Quick transfer • 6-digit code • One-time download</div>
+
+        <div class="dropzone" style="margin-top:14px;">
+          <a class="drop-btn" href="{{ url_for('public_send') }}">+ Add files</a>
+          <small>Public transfer (no login). You will get a 6-digit code.</small>
+        </div>
+
+        <div class="file-list">
+          <div class="file-item">
+            <div class="file-meta">
+              <b>Example.pdf</b>
+              <span>Encrypted storage (at rest)</span>
+            </div>
+            <div class="pill-x">×</div>
+          </div>
+          <div class="file-item">
+            <div class="file-meta">
+              <b>Report.docx</b>
+              <span>Audit tracked</span>
+            </div>
+            <div class="pill-x">×</div>
+          </div>
+          <div class="file-item">
+            <div class="file-meta">
+              <b>Project.zip</b>
+              <span>One-time code access</span>
+            </div>
+            <div class="pill-x">×</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-pane">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+          <div>
+            <div class="small-muted" style="margin-bottom:6px;">Choose mode</div>
+            <div class="tabs">
+              <button class="tab active" id="tabSend" type="button">Send</button>
+              <button class="tab" id="tabReceive" type="button">Receive</button>
+            </div>
+          </div>
+          <div class="badge">Enterprise? Use Company Login</div>
+        </div>
+
+        <div id="panelSend" style="margin-top:14px;">
+          <div class="small-muted">Public Send</div>
+          <label class="form-label">Fast transfer</label>
+          <input class="input" placeholder="Upload → get a code → share" disabled>
+
+          <label class="form-label">Code expiry</label>
+          <input class="input" placeholder="Auto-expiry + one-time download" disabled>
+
+          <div style="margin-top:18px;">
+            <a class="btn btn-primary" style="width:100%;padding:12px 14px;" href="{{ url_for('public_send') }}">
+              Send now →
+            </a>
+          </div>
+        </div>
+
+        <div id="panelReceive" style="margin-top:14px; display:none;">
+          <div class="small-muted">Public Receive</div>
+
+          <label class="form-label">6-digit receive code</label>
+          <input class="input" placeholder="123456" disabled>
+
+          <div style="margin-top:18px;">
+            <a class="btn btn-primary" style="width:100%;padding:12px 14px;" href="{{ url_for('public_receive') }}">
+              Unlock file →
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="big-space"></div>
+<div class="section-divider"></div>
+<!-- FEATURES -->
+<div id="features" class="section">
+  <div class="reveal from-left">
+    <h2 class="section-title">All Features</h2>
+    <div class="small-muted">
+      Platform capabilities designed for secure file sharing, enterprise workflow, and system management.
+    </div>
+  </div>
+
+  <div class="big-space"></div>
+
+  <div class="cards">
+
+    <div class="card reveal from-left">
+      <h4>Public File Transfer</h4>
+      <p>Users can securely send files without logging in and share them using a generated 6-digit access code.</p>
+    </div>
+
+    <div class="card reveal">
+      <h4>Public File Receive</h4>
+      <p>Receivers enter a 6-digit code to access and download files shared through the public transfer system.</p>
+    </div>
+
+    <div class="card reveal from-right">
+      <h4>Enterprise Company Accounts</h4>
+      <p>Organizations can register and create secure workspaces to manage internal file transfers.</p>
+    </div>
+
+    <div class="card reveal from-left">
+      <h4>Role-Based Dashboards</h4>
+      <p>Separate dashboards for Admin, IT, and Staff users allow structured management of files and users.</p>
+    </div>
+
+    <div class="card reveal">
+      <h4>File Assignment Workflow</h4>
+      <p>IT staff can upload files and assign them to specific employees for controlled access.</p>
+    </div>
+
+    <div class="card reveal from-right">
+      <h4>Developer / Root Portal</h4>
+      <p>The system developer can monitor companies, system usage, and platform activity through a centralized dashboard.</p>
+    </div>
+
+    <div class="card reveal from-left">
+      <h4>System Announcements</h4>
+      <p>The developer can broadcast system announcements such as maintenance notices or security updates to all users.</p>
+    </div>
+
+    <div class="card reveal">
+      <h4>Live Developer Support Chat</h4>
+      <p>Company administrators can communicate directly with the developer through the built-in chat system for support and troubleshooting.</p>
+    </div>
+
+    <div class="card reveal from-right">
+      <h4>Enterprise Activity Dashboard</h4>
+      <p>Administrators can monitor user activity, file usage, and system operations from a centralized company dashboard.</p>
+    </div>
+
+  </div>
+</div>
+
+    <!-- NEW FEATURE -->
+    <div class="card reveal from-left">
+      <h4>Live Developer Support Chat</h4>
+      <p>Company administrators can directly chat with the system developer for support, troubleshooting, and system guidance through the built-in secure messaging system.</p>
+    </div>
+
+  </div>
+</div>
+<div class="section-divider"></div>
+<!-- HOW IT WORKS -->
+<div id="how" class="section">
+  <div class="reveal from-right">
+    <h2 class="section-title">How it Works</h2>
+    <div class="small-muted">Two modes: Public quick transfer & Enterprise audited workflow.</div>
+  </div>
+
+  <div class="big-space"></div>
+
+  <div class="glass-card reveal" style="max-width: 1050px;">
+    <div class="card-inner">
+      <div class="left-pane">
+        <h3 style="margin:0 0 10px;">Public Mode (No login)</h3>
+        <div class="timeline">
+          <div class="step reveal from-left">
+            <div class="dot">1</div>
+            <div><b>Upload file</b><span>Select a file and upload it securely.</span></div>
+          </div>
+          <div class="step reveal from-left">
+            <div class="dot">2</div>
+            <div><b>Receive code</b><span>The system generates a 6-digit receive code.</span></div>
+          </div>
+          <div class="step reveal from-left">
+            <div class="dot">3</div>
+            <div><b>Receiver downloads</b><span>Receiver enters the code and downloads the file.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-pane">
+        <h3 style="margin:0 0 10px;">Enterprise Mode (Audited)</h3>
+        <div class="timeline">
+          <div class="step reveal from-right">
+            <div class="dot">1</div>
+            <div><b>Register & OTP verify</b><span>Company registration is verified by email OTP.</span></div>
+          </div>
+          <div class="step reveal from-right">
+            <div class="dot">2</div>
+            <div><b>Create users</b><span>Admin creates IT and Staff accounts.</span></div>
+          </div>
+          <div class="step reveal from-right">
+            <div class="dot">3</div>
+            <div><b>IT uploads & assigns</b><span>IT uploads files and assigns to staff members.</span></div>
+          </div>
+          <div class="step reveal from-right">
+            <div class="dot">4</div>
+            <div><b>Staff downloads</b><span>Staff downloads only assigned files. All actions are logged.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="section-divider"></div>
+<!-- SECURITY -->
+<div id="security" class="section">
+  <div class="reveal from-left">
+    <h2 class="section-title">Security</h2>
+    <div class="small-muted">Security controls designed to reduce risk and support auditing.</div>
+  </div>
+
+  <div class="big-space"></div>
+
+  <div class="security-cards">
+    <div class="card reveal from-left">
+      <h4>Secure Authentication</h4>
+      <p>Password hashing, OTP verification, and protected sessions help ensure only authorized users access the system.</p>
+    </div>
+    <div class="card reveal">
+      <h4>Authorization</h4>
+      <p>Company isolation using company_id. Staff can only access assigned files.</p>
+    </div>
+    <div class="card reveal from-right">
+      <h4>Audit Trail</h4>
+      <p>Every critical action is logged with IP, endpoint, method, status, file, and details.</p>
+    </div>
+    <div class="card reveal from-left">
+      <h4>Data Protection</h4>
+      <p>Encrypted storage at rest + controlled downloads reduces file exposure risk.</p>
+    </div>
+    <div class="card reveal">
+      <h4>Abuse Prevention</h4>
+      <p>OTP expiry and attempt limits reduce brute-force risk and misuse.</p>
+    </div>
+    <div class="card reveal from-right">
+      <h4>Monitoring</h4>
+      <p>Root dashboard shows system-wide activity, anomalies, and verification events.</p>
+    </div>
+  </div>
+
+  <div class="big-space"></div>
+
+  <div class="glass-card reveal" style="max-width: 1050px;">
+    <div class="right-pane">
+      <h3 style="margin:0 0 10px;">Want it even stronger?</h3>
+      <div class="small-muted">
+        Next upgrades: rate limiting, file malware scan, CSRF protection, secure cookies, and signed download links.
+      </div>
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn btn-primary" href="{{ url_for('register_company') }}">Start Enterprise Setup →</a>
+        <a class="btn" href="{{ url_for('public_portal') }}">Try Public Mode</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Send/Receive toggle
+  const tabSend = document.getElementById("tabSend");
+  const tabReceive = document.getElementById("tabReceive");
+  const panelSend = document.getElementById("panelSend");
+  const panelReceive = document.getElementById("panelReceive");
+
+  tabSend.addEventListener("click", () => {
+    panelSend.style.display = "block";
+    panelReceive.style.display = "none";
+    tabSend.classList.add("active");
+    tabReceive.classList.remove("active");
+  });
+
+  tabReceive.addEventListener("click", () => {
+    panelSend.style.display = "none";
+    panelReceive.style.display = "block";
+    tabReceive.classList.add("active");
+    tabSend.classList.remove("active");
+  });
+
+  // Scroll reveal animation
+  const revealEls = document.querySelectorAll(".reveal");
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add("show");
+    });
+  }, { threshold: 0.12 });
+
+  revealEls.forEach(el => observer.observe(el));
+</script>
+
+{% endblock %}

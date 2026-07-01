@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+  <div>
+    <h2 style="margin:0 0 6px;">Company: {{ company[1] }}</h2>
+    <div class="small-muted">
+      ID: {{ company[0] }} • Username: {{ company[2] }} • Verified: {{ "Yes" if company[5] == 1 else "No" }}
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;flex-wrap:wrap;">
+    <a class="btn" href="{{ url_for('root_dashboard') }}">Back</a>
+
+    <form method="POST"
+          action="{{ url_for('root_delete_company', company_id=company[0]) }}"
+          onsubmit="return confirmDeleteCompany('{{ company[1] }}');"
+          style="margin:0;">
+      <button class="btn btn-danger-solid" type="submit">
+        Delete Company
+      </button>
+    </form>
+  </div>
+</div>
+
+  <div class="grid-3" style="margin-top:14px;">
+    <div class="stat"><b>Assigned Files</b><div class="num">{{ metrics.total_assigned_files }}</div></div>
+    <div class="stat"><b>Downloads Success</b><div class="num">{{ metrics.downloads_success }}</div></div>
+    <div class="stat"><b>Downloads Denied/Fail</b><div class="num">{{ metrics.downloads_denied_or_fail }}</div></div>
+  </div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      <h3 style="margin:0 0 10px;">Users</h3>
+      <table class="table">
+        <thead><tr><th>ID</th><th>Username</th><th>Role</th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr><td>{{ u[0] }}</td><td>{{ u[1] }}</td><td>{{ u[2] }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <h3 style="margin:20px 0 10px;">Company Events (OTP / Registration / Company Login)</h3>
+      <table class="table">
+        <thead><tr><th>ID</th><th>Time</th><th>User</th><th>Role</th><th>Action</th><th>Status</th><th>Details</th></tr></thead>
+        <tbody>
+          {% for e in company_events %}
+          <tr><td>{{ e[0] }}</td><td>{{ e[1] }}</td><td>{{ e[2] }}</td><td>{{ e[3] }}</td><td>{{ e[4] }}</td><td>{{ e[5] }}</td><td>{{ e[6] }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      
+
+<div class="glass-card" style="margin-top:18px;">
+  <div class="right-pane">
+    <h3 style="margin:0 0 12px;">Reset Company Admin</h3>
+
+    <form method="POST" action="{{ url_for('root_reset_admin', company_id=company[0]) }}">
+      <label class="form-label">New Admin Username</label>
+      <input class="input" type="text" name="admin_username" required>
+
+      <label class="form-label">New Admin Password</label>
+      <input class="input" type="password" name="admin_password" required>
+
+      <button class="btn btn-primary" style="margin-top:14px;">Update Admin Credentials</button>
+    
+  </div>
+</div>
+      <h3 style="margin:20px 0 10px;">Company Audit Logs (Latest)</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Time</th><th>Status</th><th>User</th><th>Role</th><th>IP</th>
+            <th>Method</th><th>Endpoint</th><th>Action</th><th>File</th><th>Target</th><th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in audit_rows %}
+          <tr>
+            <td>{{ a[0] }}</td><td>{{ a[1] }}</td><td>{{ a[2] }}</td><td>{{ a[3] }}</td><td>{{ a[4] }}</td><td>{{ a[5] }}</td>
+            <td>{{ a[6] }}</td><td>{{ a[7] }}</td><td>{{ a[8] }}</td><td>{{ a[9] }}</td><td>{{ a[10] }}</td><td>{{ a[11] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+function confirmDeleteCompany(name) {
+  const first = confirm(
+    "⚠️ WARNING\n\nThis will permanently delete:\n• Company\n• All users\n• All files\n• All audit logs\n\nThis action CANNOT be undone.\n\nContinue?"
+  );
+
+  if (!first) return false;
+
+  const second = prompt(
+    `Type the company name EXACTLY to confirm deletion:\n\n"${name}"`
+  );
+
+  if (second !== name) {
+    alert("Company name did not match. Deletion cancelled.");
+    return false;
+  }
+
+  return true;
+}
+</script>
+<style>
+.btn-danger-solid {
+  background: linear-gradient(135deg, #ff3b3b, #d90429) !important;
+  color: #ffffff !important;
+  border: none !important;
+
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  box-shadow: 0 10px 24px rgba(255, 60, 60, 0.35);
+  transition: all .18s ease;
+
+  backdrop-filter: none !important;
+}
+
+.btn-danger-solid:hover {
+  background: linear-gradient(135deg, #ff1f1f, #b8001f) !important;
+  box-shadow: 0 14px 32px rgba(255, 40, 40, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-danger-solid:active {
+  transform: scale(0.96);
+}
+</style>
+{% endblock %}

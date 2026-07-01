@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+    <div>
+      <h2 style="margin:0 0 6px;">Global Audit Logs</h2>
+      <div class="small-muted">All audit events across the system.</div>
+    </div>
+    <a class="btn" href="{{ url_for('root_dashboard') }}">Back</a>
+  </div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Time</th><th>Status</th><th>User</th><th>Role</th><th>Company</th>
+            <th>IP</th><th>Method</th><th>Endpoint</th><th>Action</th><th>File</th><th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in rows %}
+          <tr>
+            <td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td><td>{{ r[3] }}</td><td>{{ r[4] }}</td><td>{{ r[5] }}</td>
+            <td>{{ r[6] }}</td><td>{{ r[7] }}</td><td>{{ r[8] }}</td><td>{{ r[9] }}</td><td>{{ r[10] }}</td><td>{{ r[11] }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

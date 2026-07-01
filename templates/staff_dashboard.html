@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section">
+  <h2 style="margin:0 0 8px;">Staff Dashboard</h2>
+  <div class="small-muted">Company: {{ company }}</div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      {% if files %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>File</th>
+              <th>Uploaded By</th>
+              <th>Upload Time</th>
+              <th>Download</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in files %}
+            <tr>
+              <td>{{ f[0] }}</td>
+              <td>{{ f[1] }}</td>
+              <td>{{ f[2] }}</td>
+              <td>{{ f[3] }}</td>
+              <td><a class="btn btn-primary" href="{{ url_for('download', filename=f[1]) }}">Download</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="badge">No files assigned yet.</div>
+      {% endif %}
+
+      <div style="margin-top:14px;">
+        <a class="btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

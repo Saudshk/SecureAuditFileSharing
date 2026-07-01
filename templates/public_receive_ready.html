@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:860px; margin:0 auto;">
+  <h2 style="margin:0 0 8px;">Files ready</h2>
+  <div class="small-muted">Your files are ready to download.</div>
+
+  <div class="glass-card receive-card">
+    <div class="receive-header">
+      <div>
+        <div class="receive-badge">Receive Code</div>
+        <div class="receive-code">{{ code }}</div>
+      </div>
+      <div class="receive-count">{{ files|length }} file{{ '' if files|length == 1 else 's' }}</div>
+    </div>
+
+    <div class="receive-list">
+      {% for file in files %}
+      <div class="file-row">
+        <div class="file-meta">
+          <div class="file-icon">📄</div>
+          <div class="file-text">
+            <div class="file-name">{{ file.name }}</div>
+            <div class="file-sub">Ready for secure download</div>
+          </div>
+        </div>
+
+        <a class="download-btn" href="{{ url_for('public_download', file_id=file.id) }}">
+          <span>Download</span>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .receive-card{
+    margin-top:20px;
+    padding:22px;
+    border-radius:28px;
+    background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,.28);
+    backdrop-filter: blur(16px);
+  }
+
+  .receive-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+    padding-bottom:16px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+  }
+
+  .receive-badge{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    color:rgba(255,255,255,.86);
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    margin-bottom:10px;
+  }
+
+  .receive-code{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:2px;
+    color:#ffffff;
+  }
+
+  .receive-count{
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:14px;
+    font-weight:600;
+    color:rgba(255,255,255,.90);
+    background:rgba(110, 87, 255, .18);
+    border:1px solid rgba(140,120,255,.30);
+  }
+
+  .receive-list{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+
+  .file-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:16px 18px;
+    border-radius:18px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.08);
+  }
+
+  .file-meta{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:0;
+  }
+
+  .file-icon{
+    width:46px;
+    height:46px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:14px;
+    font-size:20px;
+    background:linear-gradient(135deg, rgba(115,94,255,.30), rgba(70,190,255,.16));
+    border:1px solid rgba(255,255,255,.10);
+    flex-shrink:0;
+  }
+
+  .file-text{
+    min-width:0;
+  }
+
+  .file-name{
+    font-size:18px;
+    font-weight:700;
+    color:#f5f7ff;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:460px;
+  }
+
+  .file-sub{
+    margin-top:4px;
+    font-size:13px;
+    color:rgba(255,255,255,.58);
+  }
+
+  .download-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:138px;
+    padding:12px 18px;
+    border-radius:14px;
+    font-weight:700;
+    font-size:14px;
+    text-decoration:none;
+    color:#fff;
+    background:linear-gradient(135deg, #6d5cff, #8a63ff);
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow: 0 10px 24px rgba(109,92,255,.28);
+    transition: all .18s ease;
+  }
+
+  .download-btn:hover{
+    transform:translateY(-1px);
+    box-shadow: 0 14px 28px rgba(109,92,255,.38);
+    filter:brightness(1.05);
+  }
+
+  .download-btn:active{
+    transform:translateY(0);
+  }
+
+  @media (max-width: 700px){
+    .file-row{
+      flex-direction:column;
+      align-items:flex-start;
+    }
+
+    .file-name{
+      max-width:100%;
+      white-space:normal;
+      word-break:break-word;
+    }
+
+    .download-btn{
+      width:100%;
+    }
+  }
+</style>
+{% endblock %}

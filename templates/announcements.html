@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="padding:40px 0;">
+  <h1 style="margin-bottom:20px;">📢 System Announcements</h1>
+  <p style="opacity:.75;margin-bottom:30px;">Latest updates, maintenance alerts, and system notifications.</p>
+
+  {% if items %}
+    <div style="display:flex;flex-direction:column;gap:20px;">
+      {% for a in items %}
+        <div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px;backdrop-filter:blur(10px);">
+          <h3 style="margin-bottom:6px;">{{ a[1] }}</h3>
+          <div style="font-size:13px;opacity:.65;margin-bottom:12px;">Posted {{ a[3] }}</div>
+          <p style="line-height:1.6;">{{ a[2] }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="padding:30px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08);">
+      No announcements yet.
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:860px;margin:0 auto;">
+  <h2 style="margin:0 0 8px;">Register Company</h2>
+  <div class="small-muted">Create a company + admin account. OTP verification is required.</div>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="card-inner">
+      <div class="left-pane">
+        <div class="badge">Company Details</div>
+
+        <form method="POST">
+          <label class="form-label">Company Name</label>
+          <input class="input" name="company_name" required>
+
+          <label class="form-label">Company Email</label>
+          <input class="input" name="company_email" type="email" required>
+
+          <label class="form-label">Description</label>
+          <input class="input" name="description" placeholder="(optional)">
+
+          <label class="form-label">Company Username</label>
+          <input class="input" name="company_username" required>
+
+          <label class="form-label">Company Password</label>
+          <input class="input" name="company_password" type="password" required>
+
+          <div style="margin-top:16px;" class="badge">Admin Account</div>
+
+          <label class="form-label">Admin Username</label>
+          <input class="input" name="admin_username" required>
+
+          <label class="form-label">Admin Password</label>
+          <input class="input" name="admin_password" type="password" required>
+
+          <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:12px 14px;">
+            Register & Send OTP →
+          </button>
+        </form>
+      </div>
+
+      <div class="right-pane">
+        <h3 style="margin:0 0 10px;">What happens next?</h3>
+        <div class="small-muted">
+          • We send a 6-digit OTP to your email<br>
+          • You verify OTP to activate company<br>
+          • Then login and choose Admin / IT / Staff portal
+        </div>
+
+        <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+          <a class="btn" href="{{ url_for('company_login') }}">Back to Login</a>
+          <a class="btn btn-ghost" href="{{ url_for('home') }}">Back Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:780px;margin:0 auto;">
+  <h2>Files Ready</h2>
+
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+
+      <div class="code-box">
+        <div class="small-muted">Receive Code</div>
+        <div class="code" id="codeText">{{ code }}</div>
+        <div class="small-muted">
+          Expires in {{ expires_minutes }} minutes • One-time download
+        </div>
+
+        <button class="btn" onclick="copyCode()">Copy Code</button>
+      </div>
+
+      <div style="margin-top:20px">
+        <b>Uploaded Files:</b>
+        <ul>
+        {% for file in files %}
+          <li>{{ file }}</li>
+        {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+function copyCode(){
+  const v = document.getElementById("codeText").innerText.trim();
+  navigator.clipboard.writeText(v);
+  alert("Code copied: " + v);
+}
+</script>
+{% endblock %}

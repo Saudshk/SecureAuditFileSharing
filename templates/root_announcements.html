@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="padding:40px 0;max-width:900px;">
+
+<h1 style="margin-bottom:10px;">Developer Announcements</h1>
+
+<p style="opacity:.75;margin-bottom:30px;">
+Post system notifications or maintenance alerts.
+</p>
+
+
+<!-- CREATE ANNOUNCEMENT -->
+<div style="
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.12);
+border-radius:16px;
+padding:20px;
+margin-bottom:30px;
+">
+
+<form method="POST">
+
+<label style="font-size:14px;">Title</label>
+<input name="title" required
+style="
+width:100%;
+padding:10px;
+margin-top:6px;
+margin-bottom:16px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.06);
+color:white;
+">
+
+<label style="font-size:14px;">Message</label>
+
+<textarea name="body"required
+style="
+width:100%;
+height:120px;
+padding:10px;
+margin-top:6px;
+margin-bottom:16px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,.15);
+background:rgba(255,255,255,.06);
+color:white;
+"></textarea>
+
+<button class="btn btn-primary">
+Post Announcement
+</button>
+
+</form>
+
+</div>
+
+
+<h2 style="margin-bottom:16px;">Previous Announcements</h2>
+
+{% if announcements %}
+
+<div style="display:flex;flex-direction:column;gap:16px;">
+
+{% for a in announcements %}
+
+<div style="
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.12);
+border-radius:16px;
+padding:18px;
+">
+
+<b>{{ a.title }}</b>
+
+<div style="font-size:12px;opacity:.65;margin:6px 0;">
+{{ a.created_at }}
+</div>
+
+<div style="opacity:.9;">
+{{ a.message }}
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div style="opacity:.7;">
+No announcements posted yet.
+</div>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

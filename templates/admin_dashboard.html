@@ -1,0 +1,239 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="section">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px;flex-wrap:wrap;">
+    <div>
+      <h2 style="margin:0 0 6px;">{{ company }} — Admin Dashboard</h2>
+      <div class="small-muted">Create users, manage users, and review audit logs.</div>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a class="btn" href="{{ url_for('audit_logs') }}">Audit Logs</a>
+      <a class="btn btn-danger" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+
+  <!-- Create User -->
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="card-inner">
+      <div class="left-pane">
+        <div class="badge">Create New User</div>
+
+        <form method="POST" action="{{ url_for('admin_dashboard') }}">
+          <label class="form-label">Username</label>
+          <input class="input" type="text" name="username" placeholder="Username" required>
+
+          <label class="form-label">Password</label>
+          <input class="input" type="password" name="password" placeholder="Password" required>
+
+          <div class="form-group">
+  <label class="form-label">Role</label>
+
+  <div class="custom-select" id="roleSelect">
+    <input type="hidden" name="role" id="roleValue" required>
+    
+    <button type="button" class="custom-select-trigger" id="roleTrigger">
+      <span id="roleText">Select Department</span>
+      <span class="custom-arrow">⌄</span>
+    </button>
+
+    <div class="custom-options" id="roleOptions">
+      <div class="custom-option" data-value="staff">Staff</div>
+      <div class="custom-option" data-value="it">IT Department</div>
+    </div>
+  </div>
+</div>
+<style>
+.custom-select {
+  position: relative;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.custom-select-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(124, 92, 255, 0.55);
+  background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
+  color: #f5f7ff;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 0 0 1px rgba(124,92,255,.15), 0 10px 28px rgba(0,0,0,.16);
+  transition: all .18s ease;
+}
+
+.custom-select-trigger:hover {
+  border-color: rgba(140, 120, 255, 0.9);
+}
+
+.custom-select.open .custom-select-trigger {
+  border-color: #7c5cff;
+  box-shadow: 0 0 0 3px rgba(124,92,255,.22), 0 12px 28px rgba(0,0,0,.18);
+}
+
+.custom-arrow {
+  font-size: 16px;
+  color: rgba(255,255,255,.75);
+  transition: transform .18s ease;
+}
+
+.custom-select.open .custom-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-options {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(20,22,45,.98), rgba(33,25,70,.96));
+  border: 1px solid rgba(124,92,255,.30);
+  box-shadow: 0 20px 45px rgba(0,0,0,.30);
+  backdrop-filter: blur(16px);
+
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height .22s ease, opacity .22s ease, transform .22s ease, margin-top .22s ease;
+}
+
+.custom-select.open .custom-options {
+  max-height: 220px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.custom-option {
+  padding: 14px 14px;
+  border-radius: 14px;
+  color: #f4f6ff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .16s ease;
+  margin-bottom: 4px;
+}
+
+.custom-option:last-child {
+  margin-bottom: 0;
+}
+
+.custom-option:hover {
+  background: linear-gradient(135deg, rgba(84,102,255,.28), rgba(147,51,234,.28));
+  color: #ffffff;
+}
+
+.custom-option.selected {
+  background: linear-gradient(135deg, #4d5cff, #8a54ff);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(109,92,255,.28);
+}
+</style>
+<script>
+  const roleSelect = document.getElementById("roleSelect");
+  const roleTrigger = document.getElementById("roleTrigger");
+  const roleOptions = document.getElementById("roleOptions");
+  const roleText = document.getElementById("roleText");
+  const roleValue = document.getElementById("roleValue");
+  const roleItems = roleOptions.querySelectorAll(".custom-option");
+
+  roleTrigger.addEventListener("click", function () {
+    roleSelect.classList.toggle("open");
+  });
+
+  roleItems.forEach(item => {
+    item.addEventListener("click", function () {
+      roleItems.forEach(opt => opt.classList.remove("selected"));
+      this.classList.add("selected");
+
+      roleText.textContent = this.textContent;
+      roleValue.value = this.dataset.value;
+
+      roleSelect.classList.remove("open");
+    });
+  });
+
+  document.addEventListener("click", function (e) {
+    if (!roleSelect.contains(e.target)) {
+      roleSelect.classList.remove("open");
+    }
+  });
+</script>
+          <button class="btn btn-primary" style="width:100%;margin-top:16px;padding:12px 14px;">
+            Create User →
+          </button>
+        </form>
+      </div>
+
+      <div class="right-pane">
+        <h3 style="margin:0 0 10px;">Notes</h3>
+        <div class="small-muted">
+          • Staff can download only assigned files<br>
+          • IT can upload and assign files<br>
+          • All actions appear in audit logs (IP, endpoint, status, etc.)
+        </div>
+
+        <div style="margin-top:14px;">
+          <a class="btn btn-ghost" href="{{ url_for('portal_select') }}">Back to Portal Select</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="glass-card" style="margin-top:18px;">
+    <div class="right-pane">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+        <h3 style="margin:0;">Company Users</h3>
+        <span class="badge">Total: {{ users|length }}</span>
+      </div>
+
+      {% if users %}
+      <table class="table" style="margin-top:12px;">
+        <thead>
+          <tr>
+            <th style="width:80px;">ID</th>
+            <th>Username</th>
+            <th style="width:160px;">Role</th>
+            <th style="width:160px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user[0] }}</td>
+            <td>{{ user[1] }}</td>
+            <td>{{ user[2] }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('delete_user') }}" style="margin:0;">
+                <input type="hidden" name="user_id" value="{{ user[0] }}">
+                <button class="btn btn-danger" type="submit"
+                        onclick="return confirm('Delete user {{ user[1] }}?');">
+                  Delete
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="badge" style="margin-top:12px;">No users found yet.</div>
+      {% endif %}
+
+      <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
+        <a class="btn" href="{{ url_for('audit_logs') }}">View Audit Logs</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock %}

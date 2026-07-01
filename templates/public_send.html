@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="section" style="max-width:860px; margin:0 auto;">
+  <h2 style="margin:0 0 8px;">Public Send</h2>
+  <div class="small-muted">Upload files securely and generate a receive code.</div>
+
+  <div class="glass-card send-card">
+    <div class="send-head">
+      <div>
+        <div class="send-badge">Secure Upload</div>
+        <h3 style="margin:10px 0 6px; font-size:30px; color:#f6f7ff;">Choose files</h3>
+        <div class="send-subtext">Select one or more files to create a transfer code.</div>
+      </div>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+      <label class="upload-box" for="files">
+        <div class="upload-icon">↑</div>
+        <div class="upload-text">
+          <div class="upload-title">Drag & drop files here</div>
+          <div class="upload-desc">or click to browse from your device</div>
+        </div>
+
+        <div class="upload-meta" id="fileLabel">No files selected</div>
+        <input id="files" class="hidden-file-input" type="file" name="files" multiple required>
+      </label>
+
+      <button class="send-btn" type="submit">
+        Upload & Generate Code →
+      </button>
+    </form>
+  </div>
+</div>
+
+<div id="uploadLoader" class="upload-loader" aria-hidden="true">
+  <div class="upload-loader-card">
+    <div class="upload-loader-glow"></div>
+    <div class="upload-loader-spinner"></div>
+    <div class="upload-loader-badge">Secure Processing</div>
+    <h3 id="uploadLoaderTitle">Uploading files...</h3>
+    <p id="uploadLoaderText">Please wait while your files are uploaded, scanned, encrypted, and processed securely.</p>
+  </div>
+</div>
+
+<style>
+  .send-card{
+    margin-top:20px;
+    padding:30px;
+    border-radius:30px;
+    background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,.28);
+    backdrop-filter: blur(16px);
+  }
+
+  .send-head{
+    margin-bottom:22px;
+  }
+
+  .send-badge{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:700;
+    color:rgba(255,255,255,.86);
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+  }
+
+  .send-subtext{
+    font-size:15px;
+    color:rgba(255,255,255,.62);
+  }
+
+  .upload-box{
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    min-height:220px;
+    padding:28px 20px;
+    border-radius:24px;
+    border:1.5px dashed rgba(150,140,255,.35);
+    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    cursor:pointer;
+    transition:all .2s ease;
+    text-align:center;
+  }
+
+  .upload-box:hover{
+    border-color:rgba(150,140,255,.65);
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+    transform:translateY(-1px);
+  }
+
+  .upload-icon{
+    width:64px;
+    height:64px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:20px;
+    font-size:28px;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(135deg, #5d63ff, #8a5bff);
+    box-shadow: 0 14px 30px rgba(109,92,255,.28);
+  }
+
+  .upload-title{
+    font-size:22px;
+    font-weight:800;
+    color:#f5f7ff;
+  }
+
+  .upload-desc{
+    font-size:14px;
+    color:rgba(255,255,255,.60);
+  }
+
+  .upload-meta{
+    margin-top:6px;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:13px;
+    font-weight:600;
+    color:rgba(255,255,255,.82);
+    background:rgba(255,255,255,.07);
+    border:1px solid rgba(255,255,255,.10);
+    max-width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .hidden-file-input{
+    position:absolute;
+    inset:0;
+    opacity:0;
+    cursor:pointer;
+  }
+
+  .send-btn{
+    width:100%;
+    margin-top:20px;
+    padding:16px 18px;
+    border:none;
+    border-radius:18px;
+    font-size:20px;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(135deg, #4d5cff, #8c54ff);
+    box-shadow: 0 14px 30px rgba(109,92,255,.30);
+    transition:all .18s ease;
+    cursor:pointer;
+  }
+
+  .send-btn:hover{
+    transform:translateY(-1px);
+    filter:brightness(1.05);
+    box-shadow: 0 18px 34px rgba(109,92,255,.38);
+  }
+
+  .send-btn:active{
+    transform:translateY(0);
+  }
+
+  .send-btn:disabled{
+    cursor:not-allowed;
+    opacity:.78;
+    transform:none;
+    filter:none;
+  }
+
+  .upload-loader{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:
+      radial-gradient(circle at top, rgba(109,92,255,.18), transparent 35%),
+      rgba(7, 10, 22, .72);
+    backdrop-filter: blur(12px);
+  }
+
+  .upload-loader-card{
+    position:relative;
+    width:min(460px, 92vw);
+    padding:30px 26px;
+    border-radius:28px;
+    overflow:hidden;
+    text-align:center;
+    background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border:1px solid rgba(255,255,255,.12);
+    box-shadow: 0 20px 50px rgba(0,0,0,.35);
+    backdrop-filter: blur(18px);
+  }
+
+  .upload-loader-glow{
+    position:absolute;
+    width:180px;
+    height:180px;
+    top:-70px;
+    left:50%;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(117,96,255,.30), transparent 65%);
+    pointer-events:none;
+  }
+
+  .upload-loader-spinner{
+    width:68px;
+    height:68px;
+    margin:0 auto 18px;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.10);
+    border-top-color:#7c6cff;
+    border-right-color:#9c6bff;
+    box-shadow:0 0 30px rgba(124,108,255,.25);
+    animation:uploadSpin .9s linear infinite;
+    position:relative;
+    z-index:1;
+  }
+
+  .upload-loader-badge{
+    display:inline-block;
+    margin-bottom:12px;
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:800;
+    letter-spacing:.3px;
+    color:rgba(255,255,255,.88);
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+  }
+
+  .upload-loader-card h3{
+    margin:0 0 8px;
+    font-size:26px;
+    font-weight:800;
+    color:#f6f7ff;
+    position:relative;
+    z-index:1;
+  }
+
+  .upload-loader-card p{
+    margin:0;
+    font-size:14px;
+    line-height:1.6;
+    color:rgba(255,255,255,.68);
+    position:relative;
+    z-index:1;
+  }
+
+  @keyframes uploadSpin{
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 700px){
+    .send-card{
+      padding:22px;
+      border-radius:24px;
+    }
+
+    .upload-box{
+      min-height:190px;
+      padding:24px 16px;
+    }
+
+    .upload-title{
+      font-size:19px;
+    }
+
+    .send-btn{
+      font-size:17px;
+      padding:14px 16px;
+    }
+
+    .upload-loader-card h3{
+      font-size:22px;
+    }
+  }
+</style>
+
+<script>
+  const fileInput = document.getElementById("files");
+  const fileLabel = document.getElementById("fileLabel");
+  const uploadForm = document.getElementById("uploadForm");
+  const uploadLoader = document.getElementById("uploadLoader");
+  const uploadLoaderTitle = document.getElementById("uploadLoaderTitle");
+  const uploadLoaderText = document.getElementById("uploadLoaderText");
+  const sendBtn = document.querySelector(".send-btn");
+
+  if (fileInput && fileLabel) {
+    fileInput.addEventListener("change", function () {
+      if (!this.files || this.files.length === 0) {
+        fileLabel.textContent = "No files selected";
+        return;
+      }
+
+      if (this.files.length === 1) {
+        fileLabel.textContent = this.files[0].name;
+        return;
+      }
+
+      fileLabel.textContent = `${this.files.length} files selected`;
+    });
+  }
+
+  if (uploadForm && uploadLoader) {
+    const steps = [
+      {
+        title: "Uploading files...",
+        text: "Your files are being uploaded securely."
+      },
+      {
+        title: "Scanning for viruses...",
+        text: "Each file is being checked before it is accepted."
+      },
+      {
+        title: "Encrypting files...",
+        text: "Your files are being protected before storage and transfer."
+      },
+      {
+        title: "Generating secure code...",
+        text: "Finalizing the transfer and preparing access details."
+      }
+    ];
+
+    let stepIndex = 0;
+
+    uploadForm.addEventListener("submit", function () {
+      uploadLoader.style.display = "flex";
+      uploadLoader.setAttribute("aria-hidden", "false");
+
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.textContent = "Please wait...";
+      }
+
+      uploadLoaderTitle.textContent = steps[0].title;
+      uploadLoaderText.textContent = steps[0].text;
+
+      setInterval(() => {
+        stepIndex = (stepIndex + 1) % steps.length;
+        uploadLoaderTitle.textContent = steps[stepIndex].title;
+        uploadLoaderText.textContent = steps[stepIndex].text;
+      }, 1800);
+    });
+  }
+</script>
+{% endblock %}

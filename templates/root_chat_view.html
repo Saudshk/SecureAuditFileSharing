@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="glass-card" style="max-width:900px;margin:20px auto;">
+  <div class="right-pane">
+    <h3 style="margin:0;">{{ company_name }} — {{ admin_username }}</h3>
+    <div class="small-muted">Type: {{ chat_type }} • Chat #{{ chat_id }}</div>
+
+    <div id="chatBox" style="height:360px;overflow:auto;border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:10px;background:rgba(0,0,0,.18);margin-top:10px;"></div>
+
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <input id="msg" class="input" placeholder="Type reply..." style="flex:1;">
+      <button id="sendBtn" class="btn btn-primary" type="button">Send</button>
+    </div>
+  </div>
+</div>
+
+<div id="rootChatData" data-chat-id="{{ chat_id }}"></div>
+
+<script>
+let lastId = 0;
+const chatId = parseInt(document.getElementById("rootChatData").dataset.chatId || "0");
+const box = document.getElementById("chatBox");
+const msg = document.getElementById("msg");
+const btn = document.getElementById("sendBtn");
+
+function esc(s){ return (s||"").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+function addRow(m){
+  const row = document.createElement("div");
+  row.style.margin = "8px 0";
+  row.innerHTML = `<div style="font-size:12px;opacity:.75">${esc(m.sender)} • ${esc(m.time)}</div>
+                   <div style="padding:10px;border-radius:14px;border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.06);">
+                     ${esc(m.message)}
+                   </div>`;
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+async function poll(){
+  const res = await fetch(`/chat/thread/${chatId}/messages?since_id=${lastId}`);
+  const data = await res.json().catch(()=>({}));
+  if(!data.ok) return;
+  data.messages.forEach(m => {
+    addRow(m);
+    lastId = Math.max(lastId, m.id);
+  });
+}
+
+async function send(){
+  const text = msg.value.trim();
+  if(!text) return;
+  msg.value = "";
+
+  const res = await fetch(`/root/chat/${chatId}/send`, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ message: text })
+  });
+
+  const data = await res.json().catch(()=>({}));
+  if(!res.ok || data.ok === false){
+    alert("Send failed: " + (data.error || "unknown"));
+    return;
+  }
+  await poll();
+}
+
+btn.addEventListener("click", send);
+msg.addEventListener("keydown", (e)=>{ if(e.key==="Enter") send(); });
+
+poll();
+setInterval(poll, 2000);
+</script>
+
+{% endblock %}
